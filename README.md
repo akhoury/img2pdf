@@ -10,6 +10,6 @@ You need Node.js to be installed, google it
     cd img2pdf
     npm install
     cd bin
-    node ip2.js -h // and read
+    node i2p.js -h // and read
     // example
     node i2p --input [path] --output[path] -m --scale 0.5
