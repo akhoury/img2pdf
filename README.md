@@ -12,4 +12,4 @@ You need Node.js to be installed, google it
     cd bin
     node i2p.js -h // and read
     // example
-    node i2p --input [path] --output[path] -m --scale 0.5
+    node i2p.js --input [path] --output[path] -m --scale 0.5
