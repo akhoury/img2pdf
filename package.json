@@ -1,0 +1,26 @@
+{
+  "name": "img2pdf",
+  "description": "convert images to pdf using pdfkit",
+  "keywords": [
+    "images",
+    "pdf",
+    "img2pdf"
+  ],
+  "version": "0.0.1",
+  "author": "Aziz Khoury <bentael@gmail.com> (http://trll.co/ak)",
+  "dependencies": {
+    "pdfkit": "0.1.x",
+    "optimist": "0.4.x"
+  },
+  "bin": {
+    "i2p": "./bin/i2p.js"
+  },
+  "main": "./bin/i2p",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mde/geddy.git"
+  },
+  "engines": {
+    "node": "*"
+  }
+}
