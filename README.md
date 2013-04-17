@@ -3,12 +3,13 @@ img2pdf
 
 images to pdf util built on top of pdfkit
 
+You need Node.js to be installed, google it
+
 ## Usage: ##
     git clone https://github.com/akhoury/img2pdf.git
     cd img2pdf
     npm install
-    chmod +x bin/i2p.js
-    cd bin`
-    ip2.js -h
-    
-    i2p --input [path] --output[path] -m --scale 0.45
+    cd bin
+    node ip2.js -h // and read
+    // example
+    node i2p --input [path] --output[path] -m --scale 0.5

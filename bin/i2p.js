@@ -7,7 +7,7 @@ var argv = require('optimist').argv
 var usage = function(notice) {
   if(notice) console.log('\n' + notice);
   console.log(
-    '\nUsage: i2p --input [path] --output[path] -m --layout landscape --scale 0.45'
+    '\nUsage: i2p --input [path] --output[path] -m --scale 0.45'
       + '\n-i | --input          : input file OR directory to read'
       + '\n-o | --output         : destination file OR directory of where you would like to save the output file(s)'
       + '\n-m | --merge          : if you want to merge all images in a single pdf file'
