@@ -24,8 +24,7 @@ var addImageToDoc = function (img, doc, params, callback){
     //nothing yet
   }
   try {
-    console.log(images(img).size());
-    //doc.image(img, params);
+    doc.image(img, params);
   } catch (err){
     console.log(err+'\n'+'Skipping: ' + img);
     return null;
@@ -33,6 +32,11 @@ var addImageToDoc = function (img, doc, params, callback){
   callback(doc);
   return doc;
 };
+
+if (argv.h || argv.help){
+  usage();
+  return;
+}
 
 input = argv.i || argv.input;
 output = argv.o || argv.output;
