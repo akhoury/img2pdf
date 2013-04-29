@@ -1,6 +1,7 @@
 var argv = require('optimist').argv
   , path = require('path')
   , fs = require('fs')
+  , gm = require('gm')
   , PDFDocument = require('pdfkit')
   , input, output, merge, docs = {}, imgs = {}, io_notice, stats, layout, scale;
 
@@ -25,12 +26,12 @@ var addImageToDoc = function (img, doc, params, callback){
   }
   try {
     doc.image(img, params);
+    callback(doc);
+    return doc;
   } catch (err){
     console.log(err+'\n'+'Skipping: ' + img);
     return null;
   }
-  callback(doc);
-  return doc;
 };
 
 if (argv.h || argv.help){
@@ -55,38 +56,53 @@ if (!input || !output) {
 merge = argv.m || argv.merge || false;
 
 scale = parseFloat(argv.s || argv.scale || 1.0);
-scale = isNaN(scale) ? 1 : scale;
+scale = !scale || isNaN(scale) ? null : scale;
 
-// process directory parsing
 if (stats.isDirectory()) {
-  var mdoc = new PDFDocument(), moutput = null;
+  var mdoc = new PDFDocument(), moutput = null, params, docParams, files, i;
   fs.mkdir(output, function (err) {
     if (err){console.log(output + " already exists")}
-    fs.readdir(input, function (err, files) {
-      if (err) error(err);
-      files.forEach(function (file) {
-        console.log(file);
-        if(!merge){
-          addImageToDoc(path.join(input, file), new PDFDocument(), {scale: scale, layout: layout}, function(doc){
-            doc.write(path.join(output, file+'.pdf'));
-          });
+    files = fs.readdirSync(input);
+    for( i = 0; i < files.length; ) {
+      console.log("[1]gming image, inout: " + input + " file: " + files[i] + " i: " + i);
+      gm(path.join(input, files[i])).size(function (err, size) {
+        if (err){
+          console.log('Gm error:' + err);
         } else {
-          addImageToDoc(path.join(input, file), mdoc, {scale: scale}, function(doc){
-            doc.addPage();
-          });
+          console.log("[2]gming image, inout: " + input + " file: " + files[i] + " i: " + i);
+          params = {scale: scale ? scale : scale = 1 , width: size.width, height: size.height};
+          docParams = { size: [params.width, params.height], layout: params.width > params.height ? 'landscape' : 'portrait',
+            margins: 0
+          }
+          console.log('params: ', params);
+          console.log('docParams: ', docParams);
+          if(!merge){
+            addImageToDoc(path.join(input, files[i]), new PDFDocument(docParams), params, function(doc){
+              doc.write(path.join(output, files[i]+'.pdf'));
+            });
+          } else {
+            console.log("addingImgToDoc: ", input, files[i], i);
+            addImageToDoc(path.join(input, files[i]), mdoc, params, function(doc){
+              if (i == 0){
+                mdoc = new PDFDocument(docParams);
+              } else if (i != files.length - 1) {
+                doc.addPage(docParams);
+              } else {
+                moutput = path.join(output, 'new_merged_doc_'+ new Date().toString() + '.pdf');
+                mdoc.write(moutput);
+              }
+            });
+          }
         }
       });
-      if(merge){
-        moutput = path.join(output, 'new_merged_doc_'+ new Date().toString() + '.pdf');
-        mdoc.write(moutput);
-      }
-      console.log('All PDFs saved to:' + (moutput ? moutput : output));
-    });
+      i++;
+    }
+    console.log('All PDFs saved to:' + (moutput ? moutput : output));
   });
 } else if (stats.isFile()) {
   var fdoc = new PDFDocument(), foutput = output+'.pdf';
   addImageToDoc(path.join(input), fdoc, {scale: scale}, function(doc){
     doc.write(output);
-    console.log('PDF saved to: ' + output);
+    console.log('PDF saved to: ' + foutput);
   });
 }
